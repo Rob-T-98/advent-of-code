@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 var stack = [
-    ["W","D","G","B","H","R","v"],
+    ["W","D","G","B","H","R","V"],
     ["J","N","G","C","R","F"],
     ["L","S","F","H","D","N","J"],
     ["J","D","S","V"],
@@ -15,9 +15,33 @@ var stack = [
 const allFileContents = fs.readFileSync('commands.txt','utf-8');
 
 allFileContents.split(/\r?\n/).forEach(line =>  {
-    const regex = /\d+/;
-    var numToMove = line.match(/\d+/)[0];
-    var colFrom = line.match(/\d+/)[1];
-    var colTo = line.match(/\d+/)[2];
-    console.log(line.matchAll(regex));
-  });
+    const regex = /\d/g;
+    var matches = line.match(regex);
+    if(matches.length==4)
+    {
+        var num = matches[0]+""+matches[1];
+        var numToMove = Number(num);
+        var colFrom = matches[2];
+        var colTo = matches[3];
+    }else{
+        var numToMove = matches[0];
+        var colFrom = matches[1];
+        var colTo = matches[2];
+    }
+    
+    
+    for(let i = 0; i< numToMove; i++)
+    {
+        var column = stack[colFrom-1];
+        var lastItem = column.at(-1);
+        stack[colTo-1].push(lastItem);
+        stack[colFrom-1].splice(column.length -1,1)
+    }
+});
+
+var answer = ""
+for(const col of stack)
+{
+    answer = answer+ col.at(-1)
+}
+console.log(answer);
