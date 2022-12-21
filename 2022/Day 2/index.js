@@ -1,48 +1,59 @@
-const fs = require('fs');
+const fs = require('fs')
 
-//x = rock = 1 = A
-//y = paper = 2 = B
-//z = sizors = 3 = C
-score = 0;
-const allFileContents = fs.readFileSync('data.txt','utf-8');
-allFileContents.split(/\r?\n/).forEach(line =>  {
-    oppPlay = line.substring(0, 1);
-    playerPlay = line.substring(2,3);
-    if(playerPlay=="X")
-    {
-        if(oppPlay=="A")
-        {
-            score+=3;
-        }
-        if(oppPlay=="C")
-        {
-            score+=6
-        }
-        score+=1;
-    }
-    if(playerPlay=='Y'){
-        if(oppPlay=='B')
-        {
-            score+=3
-        }
-        if(oppPlay=='A')
-        {
-            score+=6
-        }
-        score+=2
-    }
-    if(playerPlay=='Z')
-    {
-        if(oppPlay=="B")
-        {
-            score+=6
-        }
-        if(oppPlay=='C')
-        {
-            score+=3
-        }
-        score+=3
-    }
-});
+const shape = { rock: 1, paper: 2, scissors: 3};
+const outcome = { win: 6, draw: 3, lose: 0}
 
-console.log(score)
+const calculateScore = (array) => {
+    const [input1, input2] = array
+    const { rock, paper, scissors } = shape
+    const { win, draw, lose } = outcome
+
+    if (input1 === 'A') { //rock
+        switch(input2) {
+        case 'X':         
+            return lose + scissors
+        case 'Y':         
+            return draw + rock
+        case 'Z':         
+            return win + paper
+        }
+    } else if (input1 === 'B') { // paper
+        switch(input2) {
+        case 'X':                
+            return lose + rock
+        case 'Y':                
+            return draw + paper
+        case 'Z':                
+            return win + scissors
+    }
+    } else if (input1 === 'C') { // scissors
+        switch(input2) {
+        case 'X':                
+            return lose + paper
+        case 'Y':                
+            return draw + scissors
+        case 'Z':                
+            return win + rock
+    }
+  }
+}
+
+
+fs.readFile('./resultsInput.txt', 'utf-8', (error, data) => {
+    if (error) {
+        console.error({ error })
+    }
+    const arrayData = data.split('\r\n')
+    const scoresArray = []
+
+    for (let i = 0; i < arrayData.length; i++) {
+        const element = arrayData[i];
+        const subArray = element.split(' ');
+        scoresArray.push(calculateScore(subArray))
+    
+    }
+
+    const result = scoresArray.reduce((a, b) => a + b, 0)
+    console.log(result)
+  
+})
